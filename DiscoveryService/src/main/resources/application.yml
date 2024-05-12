@@ -1,0 +1,20 @@
+
+# Standard port for Eureka Server:
+server:
+  port: 8761
+
+# Assign a key to represent this application so that we can easily refer to it later:
+  spring:
+    application:
+      name: discovery
+
+# Assign the domain we're being hosted from:
+  eureka:
+    instance:
+      hostname: localhost
+
+    client:
+      # Tells our Discovery service not to try to register with itself:
+      register-with-eureka: false
+      # Tells our service not to query itself for the location of other services:
+      fetch-registry: false

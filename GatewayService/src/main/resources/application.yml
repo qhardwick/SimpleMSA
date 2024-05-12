@@ -1,0 +1,48 @@
+
+# Standard port for Gateway Service:
+server:
+  port: 8125
+
+# Configure the location of the Eureka Client. This is the location all services
+# will go to to register themselves with the Discovery Service:
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+# Configure CORS for entire project:
+spring:
+  cloud:
+    gateway:
+      cors-configurations:
+        # All routes:
+        '[/**]':
+          # Typical React port. Could also put your load balancer url here instead:
+          allowedOrigins: http://localhost:5176
+          allowedMethods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+
+      routes:
+          # The key we defined for the UserService in its application.yml:
+        - id: user-service
+          # When we register with Eureka, we are defining a route from the Ribbon load balancer that
+          # comes packaged with the Eureka server to distribute requests across our user-service instances:
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**
+
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/payments/**
+
+# Configure logging levels:
+logging:
+  level:
+    org:
+      springframework: INFO
+      apache:
+        tomcat: ERROR
