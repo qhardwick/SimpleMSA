@@ -33,11 +33,22 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/users/**
+          # Configure the CircuitBreaker class from resilience4j:
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: fallbackController
+                fallbackUri: forward:/cache/users
 
         - id: payment-service
           uri: lb://payment-service
           predicates:
             - Path=/payments/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: fallbackController
+                fallbackUri: forward:/cache/payments
 
 # Configure logging levels:
 logging:
